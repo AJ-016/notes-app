@@ -4,7 +4,7 @@
   "description": "A simple notes app with dark mode and colors",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffeb3b",
+  "background_color": "#333333",
   "theme_color": "#4CAF50",
   "icons": [
     {
