@@ -4,16 +4,31 @@ const notesContainer = document.getElementById("notesContainer");
 const searchInput = document.getElementById("searchInput");
 const themeToggle = document.getElementById("themeToggle");
 
-// Load saved notes
+// Load notes
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+// Theme functions
+function updateThemeButtonText() {
+    if(document.body.classList.contains("dark-mode")){
+        themeToggle.textContent = "🌙 Dark Mode"; // shows current mode
+    } else {
+        themeToggle.textContent = "☀️ Light Mode"; // shows current mode
+    }
+}
 
 // Load saved theme
 if(localStorage.getItem("theme") === "dark"){
     document.body.classList.add("dark-mode");
-    themeToggle.textContent = "☀️ Light Mode";
 }
+updateThemeButtonText();
 
-// Save notes to localStorage
+themeToggle.onclick = ()=>{
+    document.body.classList.toggle("dark-mode");
+    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+    updateThemeButtonText();
+};
+
+// Save notes
 function saveNotes(){
     localStorage.setItem("notes", JSON.stringify(notes));
 }
@@ -22,14 +37,11 @@ function saveNotes(){
 function renderNotes(){
     notesContainer.innerHTML = "";
 
-    // Sort pinned notes first
     const sortedNotes = notes.slice().sort((a,b)=> b.pinned - a.pinned);
 
-    // Filter by search
     sortedNotes
     .filter(noteObj => noteObj.text.toLowerCase().includes(searchInput.value.toLowerCase()))
     .forEach((noteObj, index)=>{
-
         const noteDiv = document.createElement("div");
         noteDiv.classList.add("note");
 
@@ -62,11 +74,15 @@ function renderNotes(){
             }
         };
 
-        // Delete button
+        // Delete button with pinned confirmation
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
         deleteBtn.classList.add("delete-btn");
         deleteBtn.onclick = ()=>{
+            if(noteObj.pinned){
+                const confirmDelete = confirm("This note is pinned. Are you sure you want to delete it?");
+                if(!confirmDelete) return;
+            }
             notes.splice(index,1);
             saveNotes();
             renderNotes();
@@ -94,33 +110,8 @@ addBtn.onclick = ()=>{
     noteInput.value = "";
 };
 
-// Search notes
+// Search
 searchInput.addEventListener("input", renderNotes);
-
-// Theme toggle
-function updateThemeButtonText() {
-    if(document.body.classList.contains("dark-mode")){
-        themeToggle.textContent = "🌙 Dark Mode"; // shows current mode
-    } else {
-        themeToggle.textContent = "☀️ Light Mode"; // shows current mode
-    }
-}
-
-// Load saved theme
-if(localStorage.getItem("theme") === "dark"){
-    document.body.classList.add("dark-mode");
-}
-updateThemeButtonText();
-
-themeToggle.onclick = ()=>{
-    document.body.classList.toggle("dark-mode");
-
-    // save current mode
-    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
-
-    // update button text
-    updateThemeButtonText();
-};
 
 // Initial render
 renderNotes();
