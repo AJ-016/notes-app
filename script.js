@@ -7,16 +7,29 @@ const themeToggle = document.getElementById("themeToggle");
 // Load notes
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
-// Theme functions
+// Function to determine readable text color
+function getContrastYIQ(hexcolor){
+    hexcolor = hexcolor.replace("#","");
+    const r = parseInt(hexcolor.substr(0,2),16);
+    const g = parseInt(hexcolor.substr(2,2),16);
+    const b = parseInt(hexcolor.substr(4,2),16);
+
+    if(r>200 && g>200 && b>200) return "black";
+    if(r<55 && g<55 && b<55) return "white";
+
+    const luminance = 0.299*r + 0.587*g + 0.114*b;
+    return (luminance >= 128) ? "black" : "white";
+}
+
+// Theme
 function updateThemeButtonText() {
     if(document.body.classList.contains("dark-mode")){
-        themeToggle.textContent = "🌙 Dark Mode"; // current mode
+        themeToggle.textContent = "🌙 Dark Mode";
     } else {
-        themeToggle.textContent = "☀️ Light Mode"; // current mode
+        themeToggle.textContent = "☀️ Light Mode";
     }
 }
 
-// Load saved theme
 if(localStorage.getItem("theme") === "dark"){
     document.body.classList.add("dark-mode");
 }
@@ -28,15 +41,12 @@ themeToggle.onclick = ()=>{
     updateThemeButtonText();
 };
 
-// Save notes
 function saveNotes(){
     localStorage.setItem("notes", JSON.stringify(notes));
 }
 
-// Render notes
 function renderNotes(){
     notesContainer.innerHTML = "";
-
     const sortedNotes = notes.slice().sort((a,b)=> b.pinned - a.pinned);
 
     sortedNotes
@@ -44,24 +54,29 @@ function renderNotes(){
     .forEach((noteObj, index)=>{
         const noteDiv = document.createElement("div");
         noteDiv.classList.add("note");
+        noteDiv.style.background = noteObj.color || "#ffeb3b";
 
-        // Note text
+        // Default text color black for new notes
+        if(!noteObj.color) {
+            noteDiv.style.color = "#000";
+        } else {
+            noteDiv.style.color = getContrastYIQ(noteDiv.style.background);
+        }
+
         const noteText = document.createElement("p");
         noteText.textContent = noteObj.text;
 
-        // Timestamp
         const timestamp = document.createElement("small");
         timestamp.textContent = noteObj.lastEdited ? `Last edited: ${noteObj.lastEdited}` : "";
         timestamp.style.display = "block";
         timestamp.style.marginTop = "5px";
         timestamp.style.fontSize = "12px";
-        timestamp.style.color = "gray";
+        timestamp.style.color = noteDiv.style.color;
 
-        // Buttons container
         const btnContainer = document.createElement("div");
         btnContainer.classList.add("note-buttons");
 
-        // Pin button
+        // Pin
         const pinBtn = document.createElement("button");
         pinBtn.textContent = noteObj.pinned ? "📌 Pinned" : "📌 Pin";
         pinBtn.classList.add("pin-btn");
@@ -71,7 +86,7 @@ function renderNotes(){
             renderNotes();
         };
 
-        // Edit button
+        // Edit
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
         editBtn.classList.add("edit-btn");
@@ -79,13 +94,13 @@ function renderNotes(){
             const newText = prompt("Edit your note", noteObj.text);
             if(newText !== null){
                 noteObj.text = newText;
-                noteObj.lastEdited = new Date().toLocaleString(); // update timestamp
+                noteObj.lastEdited = new Date().toLocaleString();
                 saveNotes();
                 renderNotes();
             }
         };
 
-        // Delete button with pinned confirmation
+        // Delete
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
         deleteBtn.classList.add("delete-btn");
@@ -99,11 +114,29 @@ function renderNotes(){
             renderNotes();
         };
 
+        // Color change button (post-creation)
+        const colorBtn = document.createElement("button");
+        colorBtn.textContent = "🎨 Color";
+        colorBtn.classList.add("edit-btn");
+        colorBtn.onclick = ()=>{
+            const colorInput = document.createElement("input");
+            colorInput.type = "color";
+            colorInput.value = noteObj.color || "#ffeb3b";
+            colorInput.onchange = ()=>{
+                noteObj.color = colorInput.value;
+                noteDiv.style.background = noteObj.color;
+                noteDiv.style.color = getContrastYIQ(noteObj.color);
+                timestamp.style.color = getContrastYIQ(noteObj.color);
+                saveNotes();
+            };
+            colorInput.click();
+        };
+
         btnContainer.appendChild(pinBtn);
         btnContainer.appendChild(editBtn);
         btnContainer.appendChild(deleteBtn);
+        btnContainer.appendChild(colorBtn);
 
-        // Assemble note
         noteDiv.appendChild(noteText);
         noteDiv.appendChild(timestamp);
         noteDiv.appendChild(btnContainer);
@@ -112,7 +145,6 @@ function renderNotes(){
     });
 }
 
-// Add new note
 addBtn.onclick = ()=>{
     const noteText = noteInput.value.trim();
     if(noteText === "") return;
@@ -121,7 +153,8 @@ addBtn.onclick = ()=>{
     notes.push({
         text: noteText,
         pinned: false,
-        lastEdited: timestamp
+        lastEdited: timestamp,
+        color: null // default note uses null → black text
     });
 
     saveNotes();
@@ -129,8 +162,5 @@ addBtn.onclick = ()=>{
     noteInput.value = "";
 };
 
-// Search
 searchInput.addEventListener("input", renderNotes);
-
-// Initial render
 renderNotes();

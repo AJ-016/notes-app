@@ -16,7 +16,6 @@ body{
   max-width:500px;
 }
 
-/* Header */
 .header{
   display:flex;
   justify-content:space-between;
@@ -28,7 +27,6 @@ h1{
   margin:0;
 }
 
-/* Note input */
 .note-input{
   display:flex;
   flex-direction:column;
@@ -44,7 +42,6 @@ textarea{
   height:80px;
 }
 
-/* Buttons */
 button{
   padding:10px;
   border:none;
@@ -55,7 +52,6 @@ button{
   transition:0.2s;
 }
 
-/* Add Note Button */
 #addNoteBtn{
   background:#4CAF50;
 }
@@ -63,7 +59,6 @@ button{
   background:#3e8e41;
 }
 
-/* Delete Button */
 .delete-btn{
   background:#e74c3c;
 }
@@ -71,7 +66,6 @@ button{
   background:#c0392b;
 }
 
-/* Edit Button */
 .edit-btn{
   background:#f39c12;
 }
@@ -79,7 +73,6 @@ button{
   background:#d68910;
 }
 
-/* Pin Button */
 .pin-btn{
   background:#3498db;
 }
@@ -87,9 +80,7 @@ button{
   background:#2980b9;
 }
 
-/* Notes */
 .note{
-  background:white;
   padding:15px;
   margin-top:15px;
   border-radius:10px;
@@ -106,9 +97,9 @@ button{
   margin-top:10px;
   display:flex;
   gap:10px;
+  flex-wrap: wrap;
 }
 
-/* Search input */
 #searchInput{
   width:100%;
   padding:10px;
@@ -118,7 +109,6 @@ button{
   font-size:16px;
 }
 
-/* Dark mode */
 body.dark-mode{
   background:#121212;
   color:#f0f0f0;
@@ -129,16 +119,7 @@ body.dark-mode #searchInput{
   color:#f0f0f0;
   border:1px solid #444;
 }
-body.dark-mode .note{
-  background:#1e1e1e;
-  color:#f0f0f0;
-  box-shadow:0 4px 10px rgba(255,255,255,0.05);
-}
-body.dark-mode button#addNoteBtn{
-  background:#2ecc71;
-}
 
-/* Dark/Light toggle button */
 #themeToggle {
   background: transparent;
   color: inherit;
