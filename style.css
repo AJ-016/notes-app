@@ -9,11 +9,6 @@ body{
   color: #000;
 }
 
-body.dark-mode{
-  background:#333333;  /* dark theme background */
-  color:#f0f0f0;
-}
-
 .container{
   width:100%;
   max-width:500px;
@@ -65,12 +60,12 @@ button{
 .pin-btn{background:#3498db;}
 .pin-btn:hover{background:#2980b9;}
 
-/* NEW: Color button style */
+/* Color button style */
 .color-btn{
-  background:#1d18b0; /* purple */
+  background:#9b59b6;
 }
 .color-btn:hover{
-  background:#221678; /* darker purple */
+  background:#8e44ad;
 }
 
 .note{
@@ -99,7 +94,7 @@ button{
 }
 
 body.dark-mode{
-  background:#121212;
+  background:#333333; /* dark theme */
   color:#f0f0f0;
 }
 body.dark-mode textarea,

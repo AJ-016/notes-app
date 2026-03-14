@@ -20,8 +20,10 @@ function getContrastYIQ(hexcolor){
 function updateThemeButtonText() {
     themeToggle.textContent = document.body.classList.contains("dark-mode") ? "🌙 Dark Mode" : "☀️ Light Mode";
 }
+
 if(localStorage.getItem("theme")==="dark") document.body.classList.add("dark-mode");
 updateThemeButtonText();
+
 themeToggle.onclick = ()=>{
     document.body.classList.toggle("dark-mode");
     localStorage.setItem("theme", document.body.classList.contains("dark-mode")?"dark":"light");
@@ -41,7 +43,7 @@ function renderNotes(){
         noteDiv.style.background = noteObj.color || "#ffeb3b";
 
         if(!noteObj.color){
-            noteDiv.style.color = "#000";
+            noteDiv.style.color = "#000"; // default text for yellow notes
         } else {
             noteDiv.style.color = getContrastYIQ(noteDiv.style.background);
         }
@@ -91,10 +93,9 @@ function renderNotes(){
             renderNotes();
         };
 
-        // Updated: color button class
         const colorBtn = document.createElement("button");
         colorBtn.textContent="🎨 Color";
-        colorBtn.classList.add("color-btn"); // NEW
+        colorBtn.classList.add("color-btn"); 
         colorBtn.onclick = ()=>{
             const colorInput = document.createElement("input");
             colorInput.type="color";
@@ -131,9 +132,3 @@ addBtn.onclick = ()=>{
 
 searchInput.addEventListener("input", renderNotes);
 renderNotes();
-
-themeToggle.onclick = ()=>{
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("theme", document.body.classList.contains("dark-mode")?"dark":"light");
-    updateThemeButtonText();
-};
